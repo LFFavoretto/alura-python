@@ -11,15 +11,9 @@ class Estudante(Base):
         back_populates = "estudante", 
         uselist = False,
         cascade = "all, delete-orphan"
-    )
-    disciplina = relationship("Disciplina",
+    )    
+    matriculas = relationship("Matricula",
         back_populates = "estudante",
-        uselist = False,
-        cascade = "all, delete-orphan")
-    
-    matricula = relationship("Matricula",
-        back_populates = "estudante",
-        uselist = False,
         cascade = "all, delete-orphan"
     )
 
@@ -29,14 +23,13 @@ class Professor(Base):
     nome = Column(String)
     email = Column(String)
     perfil = relationship("Perfil",
-        back_populates = "professore",
+        back_populates = "professor",
         uselist = False,
         cascade = "all, delete-orphan"
     )
-    disciplina = relationship("Disciplina",
-        back_populates = "professore",
-        uselist = False,
-        cascade = "all, delete-orphan")
+    disciplinas = relationship("Disciplina",
+        back_populates = "professor",
+        )
 
 class Perfil(Base):
     __tablename__ = 'perfis'
@@ -54,7 +47,7 @@ class Perfil(Base):
     )
     professor_id = Column(
         Integer,
-        ForeignKey,
+        ForeignKey("professores.id"),
         unique=True
     )
     professor = relationship(
@@ -69,50 +62,38 @@ class Disciplina(Base):
     duracao = Column(String)
     professor_id = Column(
         Integer,
-        ForeignKey,
-        unique=True
+        ForeignKey("professores.id"),
+        
     )
     professor = relationship(
         "Professor",
-        back_populates= "disciplina"
+        back_populates= "disciplinas"
     )
 
-    estudante_id = Column(
-        Integer,
-        ForeignKey("estudantes.id"),
-        unique=True
-    )
-
-    estudante = relationship(
-        "Estudante",
-        back_populates="disciplina"
-    )
-
-    matricula = relationship("Matricula",
-        back_populates = "disciplina",
-        uselist = False,
+    matriculas = relationship("Matricula",
+        back_populates = "disciplinas",
         cascade = "all, delete-orphan"
     )
 
-class Matricula:
+class Matricula(Base):
+    __tablename__ = 'matriculas'
     id = Column(Integer, primary_key=True, index=True)
     estudante_id = Column(
         Integer,
-        ForeignKey,
-        unique=True
+        ForeignKey("estudantes.id"),
     )
-    estudante = relationship(
+    estudantes = relationship(
         "Estudante",
-        back_populates= "matricula"
+        back_populates= "matriculas"
     )
 
     disciplina_id = Column(
         Integer,
-        ForeignKey,
-        unique=True
+        ForeignKey("disciplinas.id"),
+        
     )
 
-    disciplina = relationship(
+    disciplinas = relationship(
         "Disciplina",
-        back_populates= "matricula"
+        back_populates= "matriculas"
     )
